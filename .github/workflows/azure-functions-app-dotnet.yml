@@ -54,7 +54,7 @@ jobs:
       - name: Azure CLI script
         uses: azure/cli@v2
         with:
-          azcliversion: latest
+          azcliversion: 2.64.0
           inlineScript: |
             az functionapp deployment source config-zip \
               --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
