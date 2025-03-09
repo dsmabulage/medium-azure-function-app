@@ -5,7 +5,8 @@ on:
     branches: ['main']
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'your-app-name'
+  AZURE_FUNCTIONAPP_NAME: ${{env.AZURE_FUNCTIONAPP_NAME}}
+  AZURE_RESOURCE_GROUP: ${{env.AZURE_RESOURCE_GROUP}}
   AZURE_FUNCTIONAPP_PACKAGE_PATH: 'FunctionApp1'
   DOTNET_VERSION: '8.0.x'
   AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -44,19 +45,19 @@ jobs:
           name: 'FunctionApp1'
           path: './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
 
-      # - name: Azure login
-      #   uses: azure/login@v2
-      #   with:
-      #     client-id: ${{ secrets.AZURE_CLIENT_ID }}
-      #     tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-      #     subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # - name: Azure CLI script
-      #   uses: azure/cli@v2
-      #   with:
-      #     azcliversion: latest
-      #     inlineScript: |
-      #       az functionapp deployment source config-zip \
-      #         --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-      #         --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
-      #         --src ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output/FunctionApp1.zip
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az functionapp deployment source config-zip \
+              --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+              --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
+              --src ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output/FunctionApp1.zip
