@@ -36,7 +36,7 @@ jobs:
 
       - name: 'Zip the Function App'
         run: |
-          pushd './${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+          pushd '${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
           zip -r FunctionApp1.zip .
           popd
 
@@ -44,23 +44,27 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: 'FunctionApp1'
-          include-hidden-files: true
-          path: ${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output
+          path: ${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output/FunctionApp1.zip
 
-      # - name: Azure login
-      #   uses: azure/login@v2
-      #   with:
-      #     creds: '{"clientId":"${{ env.AZURE_CLIENT_ID }}","clientSecret":"${{ env.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ env.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ env.AZURE_TENANT_ID }}"}'
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: '{"clientId":"${{ env.AZURE_CLIENT_ID }}","clientSecret":"${{ env.AZURE_CLIENT_SECRET }}","subscriptionId":"${{ env.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ env.AZURE_TENANT_ID }}"}'
 
-      # - name: Azure CLI script
-      #   uses: azure/cli@v2
-      #   with:
-      #     azcliversion: 2.64.0
-      #     inlineScript: |
-      #       # az functionapp deployment source config-zip \
-      #       #   --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-      #       #   --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
-      #       #   --src ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output/FunctionApp1.zip
-      #       #   -- debug
+      - name: 'Verify ZIP File Before Deployment'
+        run: ls -lh ${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output
 
-      #       az functionapp app up --app-name ${{ env.AZURE_FUNCTIONAPP_NAME }}
+      - name: 'Install Azure CLI Extensions'
+        run: |
+          az extension add --name deploy-to-azure --yes
+
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: 2.64.0
+          inlineScript: |
+            az functionapp deployment source config-zip \
+              --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+              --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
+              --src ${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output/FunctionApp1.zip \
+              --only-show-errors
