@@ -34,17 +34,17 @@ jobs:
           dotnet build --configuration Release --output ./output
           popd
 
-      - name: 'Zip the Function App'
-        run: |
-          pushd '${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
-          zip -r FunctionApp1.zip .
-          popd
-
       - name: 'Upload Artifact'
         uses: actions/upload-artifact@v4
         with:
           name: 'FunctionApp1'
           path: ${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output/FunctionApp1.zip
+
+      - name: 'Zip the Function App'
+        run: |
+          pushd '${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output'
+          zip -r FunctionApp1.zip .
+          popd
 
       - name: Azure login
         uses: azure/login@v2
