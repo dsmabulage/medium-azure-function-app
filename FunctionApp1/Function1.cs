@@ -17,7 +17,7 @@ namespace FunctionApp1
         [Function(nameof(Function1))]
         public async Task Run([BlobTrigger("test/{name}", Connection = "CONN_STRING")] Stream stream, string name)
         {
-           _logger.LogInformation("Function app deployment with Zip upload");
+           _logger.LogInformation("Deployment with Zip upload");
             _logger.LogInformation($"C# Blob trigger function Processed blob Name: {name}");
         }
     }
