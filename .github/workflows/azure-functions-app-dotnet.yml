@@ -63,8 +63,12 @@ jobs:
         with:
           azcliversion: 2.64.0
           inlineScript: |
-            az functionapp deployment source config-zip \
-              --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
-              --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
-              --src ${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output/FunctionApp1.zip \
-              --only-show-errors
+            # az functionapp deployment source config-zip \
+            #   --resource-group ${{ env.AZURE_RESOURCE_GROUP }} \
+            #   --name ${{ env.AZURE_FUNCTIONAPP_NAME }} \
+            #   --src ${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output/FunctionApp1.zip \
+            #   --only-show-errors
+
+            # curl -X POST -u <deployment_user> --data-binary "@<zip_file_path>" https://<app_name>.scm.azurewebsites.net/api/zipdeploy
+
+            curl -X POST -u ${{ env.AZURE_FUNCTIONAPP_NAME }} --data-binary "@${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output/FunctionApp1.zip" https://${{ env.AZURE_FUNCTIONAPP_NAME }}.scm.azurewebsites.net/api/zipdeploy
