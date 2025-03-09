@@ -54,13 +54,15 @@ jobs:
       - name: 'Verify ZIP File Before Deployment'
         run: ls -lh ${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output
 
-      - name: 'Install Azure CLI Extensions'
+      - name: 'Get Access Token'
         run: |
-          az extension add --name deploy-to-azure --yes
+          ACCESS_TOKEN=$(az account get-access-token --resource https://management.azure.com --query accessToken --output tsv)
+          echo "ACCESS_TOKEN=$ACCESS_TOKEN" >> $GITHUB_ENV
 
-      - name: Azure CLI script
-        uses: azure/cli@v2
-        with:
-          azcliversion: 2.64.0
-          inlineScript: |          
-            curl -X POST -u ${{ env.AZURE_FUNCTIONAPP_NAME }} --data-binary "@${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output/FunctionApp1.zip" https://${{ env.AZURE_FUNCTIONAPP_NAME }}.scm.azurewebsites.net/api/zipdeploy
+      - name: 'Deploy to Azure Function App (Zip Deploy)'
+        run: |
+          curl -X POST \
+            -H "Authorization: Bearer $ACCESS_TOKEN" \
+            --data-binary "@${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output/FunctionApp1.zip" \
+            https://${{ env.AZURE_FUNCTIONAPP_NAME }}.scm.azurewebsites.net/api/zipdeploy
+
