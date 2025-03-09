@@ -44,8 +44,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: 'FunctionApp1'
-          # include-hidden-files: true
-          path: ${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output/FunctionApp1.zip
+          include-hidden-files: true
+          path: ${{ github.workspace }}/${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output
 
       # - name: Azure login
       #   uses: azure/login@v2
