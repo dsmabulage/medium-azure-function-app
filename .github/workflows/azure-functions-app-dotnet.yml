@@ -62,4 +62,4 @@ jobs:
             #   --src ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}/output/FunctionApp1.zip
             #   -- debug
 
-            az functionapp app up ${{ env.AZURE_FUNCTIONAPP_NAME }}
+            az functionapp app up --app-name ${{ env.AZURE_FUNCTIONAPP_NAME }}
